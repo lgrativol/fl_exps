@@ -1,1 +1,1 @@
-# Fl_exps (Federated Learning Experiencies with compression)
+# Federated learning compression designed for lightweight communications
