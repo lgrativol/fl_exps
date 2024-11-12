@@ -38,26 +38,26 @@ dict_tranforms_test = {
                                         transforms.ToTensor(),
                                         transforms.Normalize((0.5071, 0.4865, 0.4409), (0.2673, 0.2564, 0.2762))]), }
 
-def get_dataset(path_to_data, cid, partition, transform ):
+def get_dataset(path_to_data, cid, partition, transform):
     # generate path to cid's data
     path_to_data = path_to_data / cid / (partition + ".pt")
 
     return TorchVision_FL(path_to_data, transform=transform)
 
-def get_dataloader(
-    path_to_data, cid, is_train, batch_size, workers,transform
-):
+
+def get_dataloader(path_to_data, cid, is_train, batch_size, workers, transform):
     """Generates trainset/valset object and returns appropiate dataloader."""
 
     partition = "train" if is_train else "val"
-    dataset = get_dataset(Path(path_to_data), cid, partition,transform)
+
+    dataset = get_dataset(Path(path_to_data), cid, partition, transform)
 
     # we use as number of workers all the cpu cores assigned to this actor
-    kwargs = {"num_workers": workers, "pin_memory": True, "drop_last": False}
+    kwargs = {"num_workers": workers, "pin_memory": True, "shuffle":True, "drop_last": False}
     return DataLoader(dataset, batch_size=batch_size, **kwargs)
 
 
-def get_random_id_splits(total, val_ratio, shuffle = True):
+def get_random_id_splits(total, val_ratio, shuffle=True):
     """splits a list of length `total` into two following a
     (1-val_ratio):val_ratio partitioning.
 
@@ -140,7 +140,7 @@ class TorchVision_FL(VisionDataset):
         path_to_data=None,
         data=None,
         targets=None,
-        transform= None,
+        transform=None,
     ):
         path = path_to_data.parent if path_to_data else None
         super(TorchVision_FL, self).__init__(path, transform=transform)
@@ -158,11 +158,12 @@ class TorchVision_FL(VisionDataset):
 
         # doing this so that it is consistent with all other datasets
         # to return a PIL Image
-        if not isinstance(img, Image.Image):  # if not PIL image
-            if not isinstance(img, np.ndarray):  # if torch tensor
-                img = img.numpy()
+        if not isinstance(img, torch.Tensor):
+            if not isinstance(img, Image.Image):  # if not PIL image
+                if not isinstance(img, np.ndarray):  # if torch tensor
+                    img = img.numpy()
 
-            img = Image.fromarray(img)
+                img = Image.fromarray(img)
 
         if self.transform is not None:
             img = self.transform(img)
@@ -174,6 +175,7 @@ class TorchVision_FL(VisionDataset):
 
     def __len__(self):
         return len(self.data)
+
 
 
 def get_cifar_10(path_to_data="./data"):

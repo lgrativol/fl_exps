@@ -47,7 +47,7 @@ def get_evaluate_fn( testset,dataset_info) :
         """Use the entire CIFAR-10 test set for evaluation."""
 
         # determine device
-        if(args.only_cpu_eval):
+        if(args.only_cpu):
             device = torch.device("cpu")
         else:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -137,13 +137,14 @@ if __name__ == "__main__":
     # configure the strategy
     strategy = fl.server.strategy.FedAvg(
         fraction_fit=args.samp_rate,
-        fraction_evaluate=args.samp_rate,
+        fraction_evaluate=0.0,
         min_fit_clients=int(pool_size*args.samp_rate),
         min_evaluate_clients=int(pool_size*args.samp_rate),
         min_available_clients=pool_size,  # All clients should be available
         initial_parameters =get_tensor_parameters(initial_weights),
         on_fit_config_fn=fit_config,
-        evaluate_fn=get_evaluate_fn(testset,dataset_info),  # centralised evaluation of global model
+        evaluate_fn=get_evaluate_fn(testset,dataset_info),  # centralised evaluation of global model,
+        
     )
     # Start the server
     server_queue = mp.Queue()

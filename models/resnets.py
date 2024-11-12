@@ -74,6 +74,9 @@ class ResNet(nn.Module):
         # return out, features
         return out
 
+def ResNet8(feature_maps, input_shape, num_classes,batchn=False):
+    return ResNet(BasicBlock, [1, 1, 1], feature_maps, input_shape, num_classes,batchn)
+
 def ResNet18(feature_maps, input_shape, num_classes,batchn=False):
     return ResNet(BasicBlock, [2, 2, 2, 2], feature_maps, input_shape, num_classes,batchn)
 

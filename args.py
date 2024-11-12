@@ -11,7 +11,6 @@ parser.add_argument("--alpha_inf",action="store_true",help="special flag to use 
 parser.add_argument("--val_ratio", type=float, default=0.0,help="validationd dataset split")
 parser.add_argument("--dataset", type = str, default='cifar10',help="which dataset to use")
 parser.add_argument("--samp_rate", type=float, default=0.2,help="client's sample rate")
-parser.add_argument("--only_cpu", action="store_true",help="to force cpu use for server-side evaluation")
 parser.add_argument("--skip_gen_training", action="store_true",help="to skip training pt data")
 
 ## Model
